@@ -4,6 +4,45 @@ import { getCanvasPoint, updateProp, updateStatus } from './ui.js';
 import { syncLayerElement } from './render.js';
 import { addLayer, dissolveIfTooSmall, recalcGroupBounds, reparentLayer } from './layers.js';
 
+export function calculateResizeBox(layer, handlePos, localDX, localDY, locked) {
+    let rawDW = 0;
+    let rawDH = 0;
+    switch (handlePos) {
+        case 'se': rawDW = localDX; rawDH = localDY; break;
+        case 'nw': rawDW = -localDX; rawDH = -localDY; break;
+        case 'ne': rawDW = localDX; rawDH = -localDY; break;
+        case 'sw': rawDW = -localDX; rawDH = localDY; break;
+        case 'n': rawDH = -localDY; break;
+        case 's': rawDH = localDY; break;
+        case 'e': rawDW = localDX; break;
+        case 'w': rawDW = -localDX; break;
+    }
+
+    let dW = rawDW;
+    let dH = rawDH;
+    if (locked) {
+        let scale;
+        if (rawDW !== 0 && rawDH !== 0) scale = Math.max((layer.width + rawDW) / layer.width, (layer.height + rawDH) / layer.height);
+        else if (rawDW !== 0) scale = (layer.width + rawDW) / layer.width;
+        else scale = (layer.height + rawDH) / layer.height;
+        scale = Math.max(0.1, scale);
+        dW = layer.width * scale - layer.width;
+        dH = layer.height * scale - layer.height;
+    }
+
+    const growsLeft = handlePos === 'nw' || handlePos === 'w' || handlePos === 'sw';
+    const growsTop = handlePos === 'nw' || handlePos === 'n' || handlePos === 'ne';
+    const centerX = handlePos === 'n' || handlePos === 's';
+    const centerY = handlePos === 'e' || handlePos === 'w';
+    let x = layer.x;
+    let y = layer.y;
+    if (centerX) x -= dW / 2;
+    else if (growsLeft) x -= dW;
+    if (centerY) y -= dH / 2;
+    else if (growsTop) y -= dH;
+    return { x, y, width: Math.max(20, layer.width + dW), height: Math.max(20, layer.height + dH) };
+}
+
 export // ============================================================
 // DRAG & DROP (Multi + Group Support)
 // ============================================================

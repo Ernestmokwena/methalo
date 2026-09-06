@@ -213,6 +213,7 @@ import {
 import {
     chooseImageLink,
     chooseImageUpload,
+    calculateResizeBox,
     clearDropIndicators,
     closeImageSourceModal,
     finalizeImageLayer,
@@ -957,13 +958,10 @@ document.addEventListener('pointermove', (e) => {
         // dimensions independently, an edge handle adjusts just that
         // one side, and for text the font stays put while the box
         // (and its wrapping) is resized by hand.
-        const box = callBusinessApiSync('resize', {
-            layer: { ...l, x: shared.resizeData.startXPos, y: shared.resizeData.startYPos, width: shared.resizeData.startW, height: shared.resizeData.startH },
-            handlePos,
-            localDX,
-            localDY,
-            locked
-        });
+        const resizeLayer = { ...l, x: shared.resizeData.startXPos, y: shared.resizeData.startYPos, width: shared.resizeData.startW, height: shared.resizeData.startH };
+        const box = l.type === 'text' && locked
+            ? callBusinessApiSync('resize', { layer: resizeLayer, handlePos, localDX, localDY, locked })
+            : calculateResizeBox(resizeLayer, handlePos, localDX, localDY, locked);
         l.x = box.x; l.y = box.y; l.width = box.width; l.height = box.height;
 
         if ((l.type === 'text' || l.type === 'trigger') && locked) {
