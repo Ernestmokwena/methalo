@@ -162,14 +162,27 @@ export function togglePrototypePreviewPanel(e) {
 
 export function ensureGroupPrototype(group) {
     if (!group || group.type !== 'group') return group;
-    const result = callBusinessApiSync('ensure-prototype', { group });
-    Object.assign(group, result);
+    Object.assign(group, {
+        prototypeEnabled: group.prototypeEnabled !== undefined ? group.prototypeEnabled : false,
+        icon: group.icon || '',
+        prototypeTriggerId: group.prototypeTriggerId !== undefined ? group.prototypeTriggerId : null,
+        prototypeState: group.prototypeState || 'pre',
+        prototypeTransition: group.prototypeTransition !== undefined ? group.prototypeTransition : shared.DEFAULT_PROTOTYPE_TRANSITION,
+        prototypeStates: {
+            pre: group.prototypeStates?.pre || { display: 'flex', clipPath: '' },
+            post: group.prototypeStates?.post || { display: 'none', clipPath: '' }
+        },
+        prototypeHover: group.prototypeHover || { opacity: 1, clipPath: '' }
+    });
     return group;
 }
 
 export function getPrototypeStateDisplay(group, fallback = 'flex') {
     if (!group) return fallback;
-    return callBusinessApiSync('get-prototype-display', { group, fallback }).display;
+    const stateName = group.prototypeState === 'post' ? 'post' : 'pre';
+    const state = group.prototypeStates?.[stateName] || group.prototypeStates?.pre || {};
+    const display = state.display ?? fallback;
+    return String(display).toLowerCase() === 'none' ? 'none' : display || fallback;
 }
 
 export // Live editor preview: flips the persisted pre/post state so the click
