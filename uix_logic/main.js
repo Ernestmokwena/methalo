@@ -57,6 +57,7 @@ import {
     normalizeNameToken,
     nudgeSelectedLayers,
     recalcGroupBounds,
+    recalcGroupBoundsAsync,
     removeCanvasBreakpoint,
     renderBreakpointControls,
     reparentLayer,
@@ -1073,13 +1074,18 @@ document.addEventListener('pointerup', (e) => {
             const l = getLayer(shared.rotateData.id);
             if (l && l.parentId !== null) parentsToRecalc.add(l.parentId);
         }
-        parentsToRecalc.forEach(pid => recalcGroupBounds(pid));
-
-        saveHistory();
-        updateStatus('Layout updated');
+        const pendingBounds = [...parentsToRecalc].map(pid => recalcGroupBoundsAsync(pid));
         shared.isDragging = false; shared.isResizing = false; shared.isRotating = false;
         shared.dragData = null; shared.resizeData = null; shared.rotateData = null;
         render(); // drop the "dragging"/"resizing"/"rotating" lift state
+
+        Promise.all(pendingBounds)
+            .then(() => {
+                saveHistory();
+                render();
+                updateStatus('Layout updated');
+            })
+            .catch(error => updateStatus(error.message));
     }
 });
 document.addEventListener('pointercancel', (e) => {

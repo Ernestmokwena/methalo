@@ -550,6 +550,20 @@ export function recalcGroupBounds(groupId) {
     if (group.parentId !== null) recalcGroupBounds(group.parentId);
 }
 
+export async function recalcGroupBoundsAsync(groupId) {
+    const group = getLayer(groupId);
+    if (!group || group.type !== 'group') return;
+    const result = await callBusinessApi('recalc-bounds', { group, layers: shared.layers });
+    if (result.updated) {
+        Object.assign(group, result.updated);
+        (result.shiftedChildren || []).forEach(updatedChild => {
+            const child = getLayer(updatedChild.id);
+            if (child) Object.assign(child, updatedChild);
+        });
+    }
+    if (group.parentId !== null) await recalcGroupBoundsAsync(group.parentId);
+}
+
 export function reparentLayer(layer, newParentId) {
     const result = callBusinessApiSync('reparent', { layer, newParentId, layers: shared.layers });
     Object.assign(layer, result.layer);
