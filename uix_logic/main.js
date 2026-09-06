@@ -212,6 +212,7 @@ import {
 } from './context-menu.js';
 
 import {
+    addImageFromPath,
     chooseImageLink,
     chooseImageUpload,
     clearDropIndicators,
@@ -1302,6 +1303,7 @@ Object.assign(window, {
     addCanvasBreakpoint: addCanvasBreakpoint,
     addCanvasBreakpointFromInput: addCanvasBreakpointFromInput,
     addLayer: addLayer,
+    addImageFromPath: addImageFromPath,
     alignSelectedInGroup: alignSelectedInGroup,
     applyCanvasHeight: applyCanvasHeight,
     applyLayerVariant: applyLayerVariant,

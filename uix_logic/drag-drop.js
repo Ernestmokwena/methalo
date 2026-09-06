@@ -127,6 +127,17 @@ export function closeImageSourceModal() {
 
 export function chooseImageUpload() { document.getElementById('imageUploadInput').click(); }
 
+export function addImageFromPath() {
+    const input = document.getElementById('imagePathInput');
+    const source = input?.value.trim();
+    if (!source) {
+        input?.focus();
+        return;
+    }
+    finalizeImageLayer(source);
+    if (input) input.value = '';
+}
+
 function localImageName(file) {
     const baseName = String(file.name || 'image')
         .replace(/[^a-zA-Z0-9._-]/g, '-')
@@ -173,8 +184,8 @@ export async function handleImageUpload(e) {
 }
 
 export function chooseImageLink() {
-    const url = prompt('Paste image URL:');
-    if (url) finalizeImageLayer(url);
+    const source = prompt('Paste an image URL or local file path:');
+    if (source) finalizeImageLayer(source.trim());
 }
 
 export function finalizeImageLayer(src) {

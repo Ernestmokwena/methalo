@@ -940,10 +940,8 @@ export function renderProperties() {
         }
         if (layer.type === 'image') {
             html += `<div class="prop-group">
-                <label>Image Link</label>
-                <input type="text" value="${layer.src || ''}" placeholder="Paste an image URL" onchange="updateProp('src', this.value)">
-                <button type="button" class="panel-btn" style="margin-top:6px;" onclick="document.getElementById('propImageUploadInput').click()"><span class="material-symbols-outlined">upload</span>Upload Image</button>
-                <input type="file" id="propImageUploadInput" accept="image/*" style="display:none;" onchange="handlePropImageUpload(event)">
+                <label>Image URL or local path</label>
+                <input type="text" value="${escapeAttribute(layer.src || '')}" placeholder="C:\\Users\\you\\Pictures\\image.png or https://..." onchange="updateProp('src', this.value)">
              </div>`;
             html += `<div class="prop-group"><label>Border Radius</label><input type="number" min="0" value="${layer.borderRadius || 0}" onchange="updateProp('borderRadius', parseFloat(this.value))"></div>`;
         }
