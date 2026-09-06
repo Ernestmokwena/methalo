@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Methalo </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+        <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+
+    <div class="app-loader" id="appLoader" role="status" aria-label="Loading"></div>
+
+    <!-- Top tabs / page navigation -->
+    <div class="top-tabs" id="topTabs">
+        <button class="tab-item active" data-page="home" data-fixed="true" onclick="setPage('home')">
+            
+            <span class="tab-label">Home.html</span>
+            <span class="tab-close-btn" role="button" tabindex="0" aria-label="Close Home.html" onclick="event.stopPropagation(); closePageTab('home')">×</span>
+        </button>
+        <button class="tab-item" data-page="about" data-fixed="true" onclick="setPage('about')">
+            
+            <span class="tab-label">About.html</span>
+            <span class="tab-close-btn" role="button" tabindex="0" aria-label="Close About.html" onclick="event.stopPropagation(); closePageTab('about')">×</span>
+        </button>
+        <button class="tab-item" data-page="contact" data-fixed="true" onclick="setPage('contact')">
+            
+            <span class="tab-label">Contact.html</span>
+            <span class="tab-close-btn" role="button" tabindex="0" aria-label="Close Contact.html" onclick="event.stopPropagation(); closePageTab('contact')">×</span>
+        </button>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <span class="app-title"> Methalo</span>
+            <div class="toolbar-divider"></div>
+            <div class="file-menu-wrapper">
+                <button class="file-menu-button" id="fileMenuButton" type="button" aria-expanded="false" onclick="toggleFileMenu()">
+                    <span class="material-symbols-outlined">draft</span>File
+                </button>
+                <div class="file-menu hidden" id="fileMenu">
+                    <button type="button" class="file-menu-item" onclick="newProject(true)">New Project</button>
+                    <button type="button" class="file-menu-item" onclick="newPage()">New Page</button>
+                    <button type="button" class="file-menu-item" onclick="saveProjectFile(false)">Save</button>
+                    <button type="button" class="file-menu-item" onclick="saveProjectFile(true)">Save As</button>
+                    <button type="button" class="file-menu-item" onclick="triggerProjectImport()">Import</button>
+                </div>
+            </div>
+            <button class="tool-btn font-panel-toggle" id="fontPanelToggle" onclick="toggleFontPanel(event)" title="Text and font controls">
+                <span class="material-symbols-outlined">format_size</span>Fonts
+            </button>
+            <button class="tool-btn trigger-picker" data-tool="trigger" id="prototypeTriggerPicker" onclick="pickPrototypeTrigger(event)" title="Pick prototype trigger">
+                <span class="material-symbols-outlined">add_reaction</span>Icons
+            </button>
+            <button class="tool-btn overflow-toggle" id="overflowToggle" onclick="toggleOverflow()"><span
+                    class="material-symbols-outlined" id="overflowToggleIcon">toggle_off</span>Overflow</button>
+            <div class="zoom-controls">
+                <button class="tool-btn zoom-btn" onclick="zoomCanvas(-ZOOM_STEP)" title="Zoom out"><span
+                        class="material-symbols-outlined">remove</span></button>
+                <button class="tool-btn zoom-btn" onclick="zoomCanvas(ZOOM_STEP)" title="Zoom in"><span
+                        class="material-symbols-outlined">add</span></button>
+                <button class="tool-btn zoom-btn" id="experimentToggle" onclick="toggleExperimentPanel(event)"
+                    title="Experiment panel"><span class="material-symbols-outlined">science</span></button>
+                <button class="tool-btn zoom-btn" id="prototypeToggle" onclick="togglePrototypeTool(event)"
+                    title="Prototype wiring"><span class="material-symbols-outlined">account_tree</span></button>
+            </div>
+        </div>
+        <div class="toolbar-right">
+            <button class="tool-btn" onclick="undo()"><span class="material-symbols-outlined">undo</span>Undo</button>
+            <button class="tool-btn" onclick="redo()"><span class="material-symbols-outlined">redo</span>Redo</button>
+            <button class="tool-btn export-btn" onclick="openExport()"><span
+                    class="material-symbols-outlined">download</span>Export</button>
+        </div>
+    </div>
+
+    <input type="file" id="projectLoaderInput" accept=".methal,application/json" hidden onchange="loadProjectFile(event)">
+
+    <div class="experiment-panel" id="experimentPanel">
+        <div class="experiment-panel-title"><span class="material-symbols-outlined">science</span>Experiment</div>
+        <div class="experiment-row">
+            <span class="experiment-label">Canvas height</span>
+            <div class="experiment-height-controls">
+                <button class="experiment-height-btn" type="button" onclick="nudgeCanvasHeight(-20)"
+                    title="Reduce height">-</button>
+                <input id="canvasHeightInput" class="experiment-height-input" type="number" min="280" max="2400"
+                    step="10" value="600" inputmode="numeric" aria-label="Canvas height in pixels">
+                <span class="experiment-height-unit">px</span>
+                <button class="experiment-height-btn" type="button" onclick="nudgeCanvasHeight(20)"
+                    title="Increase height">+</button>
+            </div>
+        </div>
+        <div class="experiment-divider"></div>
+        <div class="experiment-stack">
+            <span class="experiment-label">Canvases</span>
+            <div class="experiment-breakpoint-list" id="breakpointList"></div>
+            <div class="experiment-breakpoint-add">
+                <input id="breakpointInput" class="experiment-breakpoint-input" type="number" min="120" step="1"
+                    placeholder="Canvas width (px)" aria-label="Canvas width in pixels">
+                <button class="experiment-breakpoint-add-btn" type="button" onclick="addCanvasBreakpointFromInput()">Add
+                    canvas</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="items-panel" id="itemsPanel" aria-label="Items editor">
+        <div id="itemsPanelContent"></div>
+    </section>
+
+    <div class="prototype-preview-panel" id="prototypePreviewPanel">
+        <div class="prototype-preview-header">
+            <div class="prototype-preview-title"><span class="material-symbols-outlined">account_tree</span>Prototype wiring</div>
+            <button type="button" class="panel-close-btn" aria-label="Close prototype preview" onclick="closePrototypePreviewPanel()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="prototype-preview-list" id="prototypePreviewList"></div>
+    </div>
+
+    <section class="trigger-icon-picker" id="triggerIconPicker" aria-label="Icon picker">
+        <div class="trigger-icon-picker-header">
+            <div class="trigger-icon-title"><span class="material-symbols-outlined">add_reaction</span>Icons</div>
+            <button type="button" class="panel-close-btn" aria-label="Close icon picker" onclick="closeTriggerIconPicker()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="trigger-icon-search-wrap">
+            <span class="material-symbols-outlined">search</span>
+            <input id="triggerIconSearch" type="search" placeholder="Search icons" autocomplete="off" spellcheck="false" aria-label="Search icons">
+        </div>
+        <div class="trigger-icon-result-count" id="triggerIconResultCount"></div>
+        <div class="trigger-icon-grid" id="triggerIconGrid"></div>
+    </section>
+
+    <section class="font-panel" id="fontPanel" aria-label="Text and font controls">
+        <div class="font-panel-header">
+            <div class="font-panel-title"><span class="material-symbols-outlined">format_size</span>Text &amp; Fonts</div>
+            <button type="button" class="panel-close-btn" aria-label="Close text and font controls" onclick="closeFontPanel()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="font-panel-empty" id="fontPanelEmpty">Select a text or Items layer to edit its typography.</div>
+        <div class="font-panel-controls" id="fontPanelControls">
+            <div class="font-panel-preview" id="fontPanelPreview">Methalo</div>
+            <div class="font-panel-search-wrap">
+                <span class="material-symbols-outlined">search</span>
+                <input id="fontPanelSearch" type="search" placeholder="Search fonts" autocomplete="off" spellcheck="false" aria-label="Search fonts">
+            </div>
+            <div class="font-panel-result-count" id="fontPanelResultCount"></div>
+            <div class="font-panel-grid" id="fontPanelGrid"></div>
+            <button type="button" class="font-panel-all-button" onclick="openAllFontsPanel()">
+                <span class="material-symbols-outlined">apps</span>Check all fonts
+            </button>
+            <div class="font-panel-divider"></div>
+            <div class="font-panel-row">
+                <label>Size<input id="fontPanelSize" type="number" min="6" max="400" aria-label="Font size"></label>
+                <label>Weight<select id="fontPanelWeight" aria-label="Font weight"><option value="300">Light</option><option value="400">Regular</option><option value="500">Medium</option><option value="600">Semibold</option><option value="700">Bold</option><option value="800">Extra bold</option></select></label>
+            </div>
+            <div class="font-panel-actions">
+                <button type="button" data-text-style="fontWeight" data-value="700" title="Bold"><strong>B</strong></button>
+                <button type="button" data-text-style="fontStyle" data-value="italic" title="Italic"><em>I</em></button>
+                <button type="button" data-text-style="textDecoration" data-value="underline" title="Underline"><u>U</u></button>
+                <button type="button" data-text-style="textDecoration" data-value="line-through" title="Strikethrough"><s>S</s></button>
+                <button type="button" data-text-style="textAlign" data-value="left" title="Align left"><span class="material-symbols-outlined">format_align_left</span></button>
+                <button type="button" data-text-style="textAlign" data-value="center" title="Align center"><span class="material-symbols-outlined">format_align_center</span></button>
+                <button type="button" data-text-style="textAlign" data-value="right" title="Align right"><span class="material-symbols-outlined">format_align_right</span></button>
+            </div>
+            <div class="font-panel-case-row">
+                <label>Case<select id="fontPanelCase" aria-label="Text case"><option value="none">Normal</option><option value="upper">Uppercase</option><option value="lower">Lowercase</option><option value="camel">Title case</option></select></label>
+                <label>Color<input id="fontPanelColor" type="color" aria-label="Text color"></label>
+            </div>
+        </div>
+    </section>
+
+    <div class="all-fonts-overlay" id="allFontsOverlay" aria-hidden="true">
+        <section class="all-fonts-panel" aria-label="All fonts">
+            <div class="font-panel-header">
+                <div class="font-panel-title"><span class="material-symbols-outlined">apps</span>All Fonts</div>
+                <button type="button" class="panel-close-btn" aria-label="Close all fonts" onclick="closeAllFontsPanel()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="all-fonts-search-wrap">
+                <span class="material-symbols-outlined">search</span>
+                <input id="allFontsSearch" type="search" placeholder="Search all fonts" autocomplete="off" spellcheck="false" aria-label="Search all fonts">
+            </div>
+            <div class="all-fonts-result-count" id="allFontsResultCount"></div>
+            <div class="all-fonts-grid" id="allFontsGrid"></div>
+            <button type="button" class="all-fonts-load-more" id="allFontsLoadMore" onclick="loadMoreAllFonts()">
+                <span class="material-symbols-outlined">progress_activity</span><span>Load 20 more</span>
+            </button>
+            <button type="button" class="all-fonts-retry" id="allFontsRetry" onclick="retryAllFontsPanel()">
+                <span class="material-symbols-outlined">refresh</span><span>Retry loading fonts</span>
+            </button>
+        </section>
+    </div>
+
+    <!-- Main Area -->
+    <div class="main-area">
+        <nav class="creation-rail" aria-label="Creation tools">
+            <button class="tool-btn active" data-tool="select" onclick="setTool('select')" title="Select">
+                <span class="material-symbols-outlined">lasso_select</span><span class="tool-label">Select</span>
+            </button>
+            <button class="tool-btn" data-tool="rect" onclick="setTool('rect')" title="Rect">
+                <span class="material-symbols-outlined">activity_zone</span><span class="tool-label">Rect</span>
+            </button>
+            <button class="tool-btn" data-tool="circle" onclick="setTool('circle')" title="Circle">
+                <span class="material-symbols-outlined">circle</span><span class="tool-label">Circle</span>
+            </button>
+            <button class="tool-btn" data-tool="text" onclick="setTool('text')" title="Text">
+                <span class="material-symbols-outlined">insert_text</span><span class="tool-label">Text</span>
+            </button>
+            <button class="tool-btn" data-tool="image" onclick="setTool('image')" title="Image">
+                <span class="material-symbols-outlined">image</span><span class="tool-label">Image</span>
+            </button>
+            <button class="tool-btn" data-tool="component" onclick="openItemsSetup()" title="Items">
+                <span class="material-symbols-outlined">page_info</span><span class="tool-label">Items</span>
+            </button>
+        </nav>
+        <div class="canvas-wrapper">
+            <div class="canvas" id="canvas"></div>
+            <!-- Offscreen probe used to measure a text layer's natural size so its
+                 box can always hug the text exactly ("the box is the text's margin") -->
+            <div id="textMeasurer"
+                style="position:absolute; visibility:hidden; white-space:pre; top:-9999px; left:-9999px; pointer-events:none;">
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="sidebar-tabs">
+                <button class="sidebar-tab active" data-tab="layers" onclick="setSidebarTab('layers')"><span
+                        class="material-symbols-outlined">layers</span>Layers</button>
+                <button class="sidebar-tab" data-tab="properties" onclick="setSidebarTab('properties')"><span
+                        class="material-symbols-outlined">tune</span>Properties</button>
+            </div>
+            <div class="panel" id="layersTabPanel">
+                <div id="layerList" class="layer-list"></div>
+                <div class="panel-actions" style="margin-top:10px;">
+                    <button class="panel-btn" onclick="deleteSelected()"><span
+                            class="material-symbols-outlined">delete</span>Delete</button>
+                </div>
+            </div>
+            <div class="panel" id="propertiesTabPanel" style="display:none;">
+                <div id="propertiesPanel">
+                    <div class="no-selection">Select a layer to edit</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-item" onclick="contextAction('group')"><span
+                class="material-symbols-outlined">select_all</span>Group</div>
+        <div class="context-item" onclick="contextAction('ungroup')"><span
+                class="material-symbols-outlined">deselect</span>Ungroup</div>
+        <div class="context-divider"></div>
+        <div class="context-item" onclick="contextAction('duplicate')"><span
+                class="material-symbols-outlined">content_copy</span>Duplicate</div>
+        <div class="context-item" onclick="event.stopPropagation(); contextAction('includeIn')"><span
+            class="material-symbols-outlined">add_box</span>Include in…</div>
+        <div class="context-item" id="prototypeAction" onclick="contextAction('prototype')"><span
+                class="material-symbols-outlined">smart_button</span>Prototype…</div>
+        <div class="context-divider"></div>
+        <div class="context-item" onclick="contextAction('bindLayout')"><span
+                class="material-symbols-outlined">dashboard_customize</span>Bind Layout (Flex)…</div>
+        <div class="context-item" onclick="contextAction('unbindLayout')"><span
+                class="material-symbols-outlined">link_off</span>Unbind Layout</div>
+        <div class="context-divider"></div>
+        <div class="context-item" onclick="contextAction('alignLeft')"><span
+                class="material-symbols-outlined">format_align_left</span>Align Left</div>
+        <div class="context-item" onclick="contextAction('alignRight')"><span
+                class="material-symbols-outlined">format_align_right</span>Align Right</div>
+        <div class="context-item" onclick="contextAction('alignTop')"><span
+                class="material-symbols-outlined">vertical_align_top</span>Align Top</div>
+        <div class="context-item" onclick="contextAction('alignBottom')"><span
+                class="material-symbols-outlined">vertical_align_bottom</span>Align Bottom</div>
+        <div class="context-item" onclick="contextAction('alignCenter')"><span
+                class="material-symbols-outlined">center_focus_strong</span>Align Center</div>
+        <div class="context-divider"></div>
+        <div class="context-item" onclick="contextAction('hide')"><span
+                class="material-symbols-outlined">visibility_off</span>Hide</div>
+        <div class="context-item" onclick="contextAction('show')"><span
+                class="material-symbols-outlined">visibility</span>Show</div>
+        <div class="context-divider"></div>
+        <div class="context-item" onclick="contextAction('rename')"><span
+                class="material-symbols-outlined">edit</span>Rename Layer</div>
+        <div class="context-item" onclick="contextAction('textUpper')"><span
+                class="material-symbols-outlined">format_size</span>Uppercase</div>
+        <div class="context-item" onclick="contextAction('textLower')"><span
+                class="material-symbols-outlined">text_fields</span>Lowercase</div>
+        <div class="context-item" onclick="contextAction('textCamel')"><span
+                class="material-symbols-outlined">title</span>Camel Case</div>
+        <div class="context-item" onclick="contextAction('editGroupName')"><span
+                class="material-symbols-outlined">drive_file_rename_outline</span>Edit Group Name</div>
+        <div class="context-item" onclick="contextAction('groupFeatures')"><span
+                class="material-symbols-outlined">settings_suggest</span>Group Features…</div>
+    </div>
+
+    <div class="group-features-panel" id="prototypePanel">
+        <div class="group-panel-header">
+            <div class="group-panel-title">Prototype</div>
+            <button type="button" class="panel-close-btn" aria-label="Close prototype panel" onclick="closePrototypePanel()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="group-panel-section">
+            <label>Enabled</label>
+            <div class="group-btn-row" style="grid-template-columns: repeat(2, minmax(0,1fr));">
+                <button type="button" data-proto-key="enabled" data-proto-value="true">On</button>
+                <button type="button" data-proto-key="enabled" data-proto-value="false">Off</button>
+            </div>
+        </div>
+        <div class="group-panel-section">
+            <label>Trigger by</label>
+            <select data-proto-trigger="layer">
+                <option value="">None</option>
+            </select>
+        </div>
+        <div class="group-panel-section">
+            <label>Pre state (default)</label>
+            <div class="group-panel-row">
+                <label>Display
+                    <select data-proto-state="pre" data-proto-state-prop="display">
+                        <option value="flex">Flex</option>
+                        <option value="none">None</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+        <div class="group-panel-section">
+            <label>Post state (toggled)</label>
+            <div class="group-panel-row">
+                <label>Display
+                    <select data-proto-state="post" data-proto-state-prop="display">
+                        <option value="flex">Flex</option>
+                        <option value="none">None</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+        <div class="group-panel-section">
+            <div class="prop-group">
+                <label>Transition time (seconds)</label>
+                <input type="range" min="0" max="2" step="0.05" data-proto-transition value="0.45">
+                <span class="prop-range-value">0.45s</span>
+            </div>
+        </div>
+        <div class="context-divider"></div>
+        <button type="button" class="flex-panel-done" onclick="closePrototypePanel()">Done</button>
+    </div>
+
+    <!-- Flex Bind Panel (opened from "Bind Layout" context menu item) -->
+    <div class="flex-panel" id="flexPanel">
+        <div class="flex-panel-title">Flex Layout</div>
+        <div class="flex-panel-section">
+            <label>Direction</label>
+            <div class="flex-btn-row">
+                <button type="button" data-key="direction" data-value="row">Row →</button>
+                <button type="button" data-key="direction" data-value="column">Column ↓</button>
+            </div>
+        </div>
+        <div class="flex-panel-section">
+            <label>Justify</label>
+            <div class="flex-btn-row">
+                <button type="button" data-key="justify" data-value="space-between">Space Between</button>
+                <button type="button" data-key="justify" data-value="space-around">Space Around</button>
+                <button type="button" data-key="justify" data-value="center">Center</button>
+            </div>
+        </div>
+        <div class="flex-panel-section">
+            <label>Align</label>
+            <div class="flex-btn-row">
+                <button type="button" data-key="align" data-value="flex-start">Start</button>
+                <button type="button" data-key="align" data-value="center">Center</button>
+                <button type="button" data-key="align" data-value="flex-end">End</button>
+                <button type="button" data-key="align" data-value="stretch">Stretch</button>
+            </div>
+        </div>
+        <div class="context-divider"></div>
+        <button type="button" class="flex-panel-unbind" onclick="unbindFlex()"><span
+                class="material-symbols-outlined">link_off</span>Unbind Layout</button>
+        <button type="button" class="flex-panel-done" onclick="closeFlexPanel()">Done</button>
+    </div>
+
+    <div class="group-features-panel" id="groupFeaturesPanel">
+        <div class="group-panel-header">
+            <div class="group-panel-title"><span class="material-symbols-outlined">settings_suggest</span>Group Features</div>
+            <button type="button" class="panel-close-btn" aria-label="Close group features" onclick="closeGroupFeaturesPanel()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="group-panel-section">
+            <label>Border</label>
+            <div class="group-btn-row">
+                <button type="button" data-key="borderStyle" data-value="none">None</button>
+                <button type="button" data-key="borderStyle" data-value="solid">Solid</button>
+                <button type="button" data-key="borderStyle" data-value="dashed">Dashed</button>
+                <button type="button" data-key="borderStyle" data-value="double">Double</button>
+            </div>
+            <div class="group-panel-row">
+                <label>Thickness <input type="number" min="0" step="1" data-prop="borderThickness"></label>
+                <label>Color <input type="color" data-prop="borderColor"></label>
+            </div>
+        </div>
+        <div class="group-panel-section">
+            <label>Background</label>
+            <div class="group-btn-row">
+                <button type="button" data-key="backgroundEnabled" data-value="true">On</button>
+                <button type="button" data-key="backgroundEnabled" data-value="false">Off</button>
+            </div>
+            <div class="group-panel-row">
+                <label>Color <input type="color" data-prop="backgroundColor"></label>
+            </div>
+        </div>
+        <div class="group-panel-section">
+            <label>Link</label>
+            <div class="group-btn-row">
+                <button type="button" data-key="linkType" data-value="none">None</button>
+                <button type="button" data-key="linkType" data-value="website">Website</button>
+                <button type="button" data-key="linkType" data-value="page">Page</button>
+                <button type="button" data-key="linkType" data-value="scrollto">Scroll-to</button>
+            </div>
+            <div class="link-inputs">
+                <div class="link-input link-website">
+                    <label>Website URL<input type="text" data-prop="linkUrl" placeholder="https://example.com"></label>
+                </div>
+                <div class="link-input link-page">
+                    <label>Page URL<input type="text" data-prop="linkUrl" placeholder="/page.html"></label>
+                </div>
+                <div class="link-input link-scrollto">
+                    <label>Target section<select data-prop="linkTargetId"></select></label>
+                </div>
+            </div>
+        </div>
+        <div class="context-divider"></div>
+        <button type="button" class="flex-panel-done" onclick="closeGroupFeaturesPanel()">Done</button>
+    </div>
+
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <span id="statusInfo">Ready</span>
+        <span id="layerCount">0 layers</span>
+    </div>
+
+    <!-- Add Image Modal -->
+    <div class="modal-overlay" id="imageSourceModal">
+        <div class="modal" style="max-width:360px;">
+            <h2><span class="material-symbols-outlined">image</span>Add Image</h2>
+            <p style="color:#94a3b8; font-size:0.8rem; margin-bottom:1rem;">Upload a file from your device, or paste a
+                link to an image.</p>
+            <div style="display:flex; flex-direction:column; gap:0.6rem;">
+                <button class="panel-btn" onclick="chooseImageUpload()"><span
+                        class="material-symbols-outlined">upload</span>Upload from device</button>
+                <button class="panel-btn" onclick="chooseImageLink()"><span
+                        class="material-symbols-outlined">link</span>Paste image link</button>
+            </div>
+            <input type="file" id="imageUploadInput" accept="image/*" style="display:none;"
+                onchange="handleImageUpload(event)">
+            <div class="modal-actions"><button class="btn-close" onclick="closeImageSourceModal()"><span
+                        class="material-symbols-outlined">close</span>Cancel</button></div>
+        </div>
+    </div>
+
+    <!-- Rename Dialog -->
+    <div class="modal-overlay" id="renameDialogModal">
+        <div class="modal rename-modal">
+            <h2 id="renameDialogTitle"><span class="material-symbols-outlined">edit</span>Rename</h2>
+            <label class="rename-dialog-label" id="renameDialogLabel" for="renameDialogInput">Name</label>
+            <input id="renameDialogInput" class="rename-dialog-input" type="text" maxlength="80" spellcheck="false">
+            <div class="modal-actions">
+                <button class="btn-close" type="button" id="renameDialogCancel"><span
+                        class="material-symbols-outlined">close</span>Cancel</button>
+                <button class="btn-copy" type="button" id="renameDialogConfirm"><span
+                        class="material-symbols-outlined">check</span>Rename</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="exportModal">
+        <div class="modal">
+            <h2><span class="material-symbols-outlined">code</span>Export</h2>
+            <pre id="exportCode">Loading...</pre>
+            <div class="modal-actions">
+                <button class="btn-close" onclick="closeExport()"><span
+                        class="material-symbols-outlined">close</span>Close</button>
+                <button class="btn-copy" onclick="downloadExportHtml()"><span
+                    class="material-symbols-outlined">download</span>Download HTML</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="uix_logic/main.js"></script>
+</body>
+
+</html>
