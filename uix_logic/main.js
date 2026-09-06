@@ -1111,8 +1111,8 @@ document.addEventListener('pointercancel', (e) => {
 
 shared.sketchData = null;
 shared.pendingImageBox = null;
-shared.PREVIEW_CLASS = { rect: 'rect-preview', circle: 'circle-preview', text: 'text-preview', image: 'image-preview', trigger: 'trigger-preview' };
-shared.DEFAULT_SIZE = { rect: [120, 80], circle: [120, 120], text: [200, 50], image: [160, 120], component: [360, 48], trigger: [42, 42] };
+shared.PREVIEW_CLASS = { rect: 'rect-preview', circle: 'circle-preview', text: 'text-preview', image: 'image-preview', component: 'component-preview', button: 'button-preview', trigger: 'trigger-preview' };
+shared.DEFAULT_SIZE = { rect: [120, 80], circle: [120, 120], text: [200, 50], image: [160, 120], component: [360, 48], button: [140, 44], trigger: [42, 42] };
 shared.MIN_SKETCH = 10;
 
 document.getElementById('canvas').addEventListener('pointerdown', (e) => {

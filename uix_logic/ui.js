@@ -945,6 +945,16 @@ export function renderProperties() {
              </div>`;
             html += `<div class="prop-group"><label>Border Radius</label><input type="number" min="0" value="${layer.borderRadius || 0}" onchange="updateProp('borderRadius', parseFloat(this.value))"></div>`;
         }
+        if (layer.type === 'button') {
+            html += `<div class="prop-group"><label>Button label</label><input type="text" value="${escapeAttribute(layer.content || 'Button')}" onchange="updateProp('content', this.value)"></div>`;
+            html += `<div class="prop-group"><label>Font size</label><input type="number" min="8" max="200" value="${layer.fontSize || 16}" onchange="updateProp('fontSize', parseFloat(this.value))"></div>`;
+            html += renderColorControl('Fill color', 'backgroundColor', layer.backgroundColor, '#4CAF50');
+            html += renderColorControl('Text color', 'color', layer.color, '#ffffff');
+            html += `<div class="prop-group"><label>Border style</label><select onchange="updateProp('borderStyle', this.value)"><option value="none"${layer.borderStyle === 'none' ? ' selected' : ''}>None</option><option value="solid"${layer.borderStyle === 'solid' ? ' selected' : ''}>Solid</option><option value="dashed"${layer.borderStyle === 'dashed' ? ' selected' : ''}>Dashed</option><option value="double"${layer.borderStyle === 'double' ? ' selected' : ''}>Double</option></select></div>`;
+            html += `<div class="prop-group"><label>Border thickness</label><input type="number" min="0" value="${layer.borderThickness || 0}" onchange="updateProp('borderThickness', parseFloat(this.value))"></div>`;
+            html += renderColorControl('Border color', 'borderColor', layer.borderColor, '#388E3C');
+            html += `<div class="prop-group"><label>Corner radius</label><input type="number" min="0" max="200" value="${layer.borderRadius || 0}" onchange="updateProp('borderRadius', parseFloat(this.value))"></div>`;
+        }
          html += renderLayerLinkControls(layer);
     }
     }

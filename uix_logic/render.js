@@ -362,6 +362,22 @@ export function syncLayerElement(layer) {
         }
     } else if (layer.type === 'component') {
         renderComponentContent(el, layer);
+    } else if (layer.type === 'button') {
+        el.textContent = layer.content || 'Button';
+        el.style.display = 'flex';
+        el.style.alignItems = 'center';
+        el.style.justifyContent = 'center';
+        el.style.padding = '8px 16px';
+        el.style.color = layer.color || '#ffffff';
+        el.style.backgroundColor = layer.backgroundColor || '#4CAF50';
+        el.style.fontFamily = layer.fontFamily || 'Arial, Helvetica, sans-serif';
+        el.style.fontSize = `${layer.fontSize || 16}px`;
+        el.style.fontWeight = layer.fontWeight || '600';
+        el.style.borderRadius = `${layer.borderRadius || 5}px`;
+        el.style.border = layer.borderStyle && layer.borderThickness > 0
+            ? `${layer.borderThickness}px ${layer.borderStyle} ${layer.borderColor || '#388E3C'}`
+            : 'none';
+        el.style.cursor = 'pointer';
     } else {
         el.style.backgroundColor = layer.backgroundColor || '#737373';
         if (layer.borderRadius) el.style.borderRadius = layer.borderRadius + 'px';
@@ -552,6 +568,22 @@ export function render() {
             el.style.borderRadius = layer.borderRadius ? `${layer.borderRadius}px` : '';
         } else if (layer.type === 'component') {
             renderComponentContent(el, layer);
+        } else if (layer.type === 'button') {
+            el.textContent = layer.content || 'Button';
+            el.style.display = 'flex';
+            el.style.alignItems = 'center';
+            el.style.justifyContent = 'center';
+            el.style.padding = '8px 16px';
+            el.style.color = layer.color || '#ffffff';
+            el.style.backgroundColor = layer.backgroundColor || '#4CAF50';
+            el.style.fontFamily = layer.fontFamily || 'Arial, Helvetica, sans-serif';
+            el.style.fontSize = `${layer.fontSize || 16}px`;
+            el.style.fontWeight = layer.fontWeight || '600';
+            el.style.borderRadius = `${layer.borderRadius || 5}px`;
+            el.style.border = layer.borderStyle && layer.borderThickness > 0
+                ? `${layer.borderThickness}px ${layer.borderStyle} ${layer.borderColor || '#388E3C'}`
+                : 'none';
+            el.style.cursor = 'pointer';
         } else if (layer.type === 'trigger') {
             const preIcon = layer.preIcon !== undefined ? layer.preIcon : (layer.icon !== undefined ? layer.icon : shared.currentTriggerIcon || 'ads_click');
             el.style.setProperty('--prototype-transition', `${shared.DEFAULT_PROTOTYPE_TRANSITION}s`);
