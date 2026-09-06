@@ -66,7 +66,7 @@ export function preloadFontChoices(fonts) {
 
 export function getSelectedTypographyLayer() {
     const selected = getSelectedLayers();
-    return selected.length === 1 && (selected[0].type === 'text' || selected[0].type === 'component') ? selected[0] : null;
+    return selected.length === 1 && ['text', 'component', 'button'].includes(selected[0].type) ? selected[0] : null;
 }
 
 export function populateFontPanel() {

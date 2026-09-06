@@ -579,6 +579,14 @@ export function render() {
             el.style.fontFamily = layer.fontFamily || 'Arial, Helvetica, sans-serif';
             el.style.fontSize = `${layer.fontSize || 16}px`;
             el.style.fontWeight = layer.fontWeight || '600';
+            el.style.fontStyle = layer.fontStyle || 'normal';
+            el.style.textDecoration = layer.textDecoration || 'none';
+            el.style.textAlign = layer.textAlign || 'center';
+            el.style.textTransform = layer.textTransform === 'upper' ? 'uppercase' : layer.textTransform === 'lower' ? 'lowercase' : layer.textTransform === 'camel' ? 'capitalize' : 'none';
+            el.style.fontStyle = layer.fontStyle || 'normal';
+            el.style.textDecoration = layer.textDecoration || 'none';
+            el.style.textAlign = layer.textAlign || 'center';
+            el.style.textTransform = layer.textTransform === 'upper' ? 'uppercase' : layer.textTransform === 'lower' ? 'lowercase' : layer.textTransform === 'camel' ? 'capitalize' : 'none';
             el.style.borderRadius = `${layer.borderRadius || 5}px`;
             el.style.border = layer.borderStyle && layer.borderThickness > 0
                 ? `${layer.borderThickness}px ${layer.borderStyle} ${layer.borderColor || '#388E3C'}`
