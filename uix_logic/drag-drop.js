@@ -127,13 +127,41 @@ export function closeImageSourceModal() {
 
 export function chooseImageUpload() { document.getElementById('imageUploadInput').click(); }
 
+function localImageName(file) {
+    const baseName = String(file.name || 'image')
+        .replace(/[^a-zA-Z0-9._-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^[-.]+|[-.]+$/g, '') || 'image';
+    const extension = baseName.includes('.') ? '' : '.png';
+    return `${Date.now()}-${baseName}${extension}`;
+}
+
+async function saveImageToProjectFolder(file) {
+    if (!shared.projectDirectoryHandle) return null;
+    const assetsDirectory = await shared.projectDirectoryHandle.getDirectoryHandle('assets', { create: true });
+    const imagesDirectory = await assetsDirectory.getDirectoryHandle('images', { create: true });
+    const imageName = localImageName(file);
+    const imageHandle = await imagesDirectory.getFileHandle(imageName, { create: true });
+    const writable = await imageHandle.createWritable();
+    await writable.write(file);
+    await writable.close();
+    return `assets/images/${imageName}`;
+}
+
 export async function importImageAsset(file) {
+    const localSource = await saveImageToProjectFolder(file);
+    if (localSource) {
+        shared.localImageFiles.set(localSource, file);
+        return localSource;
+    }
+
     const dataUrl = await new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result);
         reader.onerror = () => reject(new Error('Could not read image'));
         reader.readAsDataURL(file);
     });
+
     const response = await fetch('/api/assets/images', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
