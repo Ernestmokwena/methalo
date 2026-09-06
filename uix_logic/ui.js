@@ -693,7 +693,7 @@ export function closeGroupFeaturesPanel() {
 export function updateGroupFeaturesPanelUI() {
     const group = getLayer(shared.groupFeaturesPanelGroupId);
     if (!group) return;
-    const defaults = { borderStyle: 'dashed', borderThickness: 2, borderColor: '#f59e0b', backgroundEnabled: false, backgroundColor: 'rgba(245, 158, 11, 0.05)', linkType: 'none', linkUrl: '', linkTargetId: '' };
+    const defaults = { borderStyle: 'none', borderThickness: 0, borderColor: '#000000', backgroundEnabled: false, backgroundColor: 'transparent', linkType: 'none', linkUrl: '', linkTargetId: '' };
     group.borderStyle = group.borderStyle !== undefined ? group.borderStyle : defaults.borderStyle;
     group.borderThickness = group.borderThickness !== undefined ? group.borderThickness : defaults.borderThickness;
     group.borderColor = group.borderColor !== undefined ? group.borderColor : defaults.borderColor;
