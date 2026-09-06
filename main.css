@@ -6,7 +6,12 @@
 
         body {
             font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-            background: #111111;
+            background-color: #1b1d1f;
+            background-image:
+                repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018) 0, rgba(255, 255, 255, 0.018) 1px, transparent 1px, transparent 3px),
+                repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.025) 0, rgba(0, 0, 0, 0.025) 1px, transparent 1px, transparent 4px),
+                linear-gradient(135deg, #25282b 0%, #17191b 52%, #202326 100%);
+            background-attachment: fixed;
             color: #f2f2f2;
             height: 100vh;
             display: flex;
