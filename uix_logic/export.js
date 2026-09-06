@@ -62,6 +62,16 @@ export async function downloadProjectFile(filename = shared.currentProjectFileNa
     updateStatus(`Project saved as ${link.download}`);
 }
 
+export async function chooseProjectFolder() {
+    if (!window.showDirectoryPicker) {
+        updateStatus('Project folders are not supported in this browser');
+        return false;
+    }
+    shared.projectDirectoryHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+    updateStatus('Project folder ready for local assets');
+    return true;
+}
+
 export async function saveProjectToLocalFolder(filename = shared.currentProjectFileName || 'project.methal', promptForFolder = false) {
     if (!window.showDirectoryPicker) return false;
     filename = filename.toLowerCase().endsWith('.methal') ? filename : `${filename}.methal`;

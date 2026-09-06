@@ -71,6 +71,7 @@ import {
 
 import {
     applyProjectToEditor,
+    chooseProjectFolder,
     closeExport,
     downloadExportHtml,
     downloadProjectFile,
@@ -1310,6 +1311,7 @@ Object.assign(window, {
     callBusinessApiSync: callBusinessApiSync,
     captureLayerVariant: captureLayerVariant,
     centerCanvasViewport: centerCanvasViewport,
+    chooseProjectFolder: chooseProjectFolder,
     chooseImageLink: chooseImageLink,
     chooseImageUpload: chooseImageUpload,
     clampCanvasHeight: clampCanvasHeight,
