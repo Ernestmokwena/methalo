@@ -55,7 +55,6 @@
                 <div class="file-menu hidden" id="fileMenu">
                     <button type="button" class="file-menu-item" onclick="newProject(true)">New Project</button>
                     <button type="button" class="file-menu-item" onclick="newPage()">New Page</button>
-                    <button type="button" class="file-menu-item" onclick="chooseProjectFolder()">Choose Project Folder</button>
                     <button type="button" class="file-menu-item" onclick="saveProjectFile(false)">Save</button>
                     <button type="button" class="file-menu-item" onclick="saveProjectFile(true)">Save As</button>
                     <button type="button" class="file-menu-item" onclick="triggerProjectImport()">Import</button>
@@ -462,12 +461,16 @@
     <div class="modal-overlay" id="imageSourceModal">
         <div class="modal" style="max-width:360px;">
             <h2><span class="material-symbols-outlined">image</span>Add Image</h2>
-            <p style="color:#94a3b8; font-size:0.8rem; margin-bottom:1rem;">Paste an image URL or a copied local file path.</p>
+            <p style="color:#94a3b8; font-size:0.8rem; margin-bottom:1rem;">Upload a file from your device, or paste a
+                link to an image.</p>
             <div style="display:flex; flex-direction:column; gap:0.6rem;">
-                <input id="imagePathInput" type="text" placeholder="C:\\Users\\you\\Pictures\\image.png or https://..." autocomplete="off">
-                <button class="panel-btn" onclick="addImageFromPath()"><span
-                        class="material-symbols-outlined">add_photo_alternate</span>Add Image</button>
+                <button class="panel-btn" onclick="chooseImageUpload()"><span
+                        class="material-symbols-outlined">upload</span>Upload from device</button>
+                <button class="panel-btn" onclick="chooseImageLink()"><span
+                        class="material-symbols-outlined">link</span>Paste image link</button>
             </div>
+            <input type="file" id="imageUploadInput" accept="image/*" style="display:none;"
+                onchange="handleImageUpload(event)">
             <div class="modal-actions"><button class="btn-close" onclick="closeImageSourceModal()"><span
                         class="material-symbols-outlined">close</span>Cancel</button></div>
         </div>
