@@ -71,7 +71,6 @@ import {
 
 import {
     applyProjectToEditor,
-    chooseProjectFolder,
     closeExport,
     downloadExportHtml,
     downloadProjectFile,
@@ -212,7 +211,6 @@ import {
 } from './context-menu.js';
 
 import {
-    addImageFromPath,
     chooseImageLink,
     chooseImageUpload,
     clearDropIndicators,
@@ -1303,7 +1301,6 @@ Object.assign(window, {
     addCanvasBreakpoint: addCanvasBreakpoint,
     addCanvasBreakpointFromInput: addCanvasBreakpointFromInput,
     addLayer: addLayer,
-    addImageFromPath: addImageFromPath,
     alignSelectedInGroup: alignSelectedInGroup,
     applyCanvasHeight: applyCanvasHeight,
     applyLayerVariant: applyLayerVariant,
@@ -1313,7 +1310,6 @@ Object.assign(window, {
     callBusinessApiSync: callBusinessApiSync,
     captureLayerVariant: captureLayerVariant,
     centerCanvasViewport: centerCanvasViewport,
-    chooseProjectFolder: chooseProjectFolder,
     chooseImageLink: chooseImageLink,
     chooseImageUpload: chooseImageUpload,
     clampCanvasHeight: clampCanvasHeight,

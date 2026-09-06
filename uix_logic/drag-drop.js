@@ -127,17 +127,6 @@ export function closeImageSourceModal() {
 
 export function chooseImageUpload() { document.getElementById('imageUploadInput').click(); }
 
-export function addImageFromPath() {
-    const input = document.getElementById('imagePathInput');
-    const source = input?.value.trim();
-    if (!source) {
-        input?.focus();
-        return;
-    }
-    finalizeImageLayer(source);
-    if (input) input.value = '';
-}
-
 function localImageName(file) {
     const baseName = String(file.name || 'image')
         .replace(/[^a-zA-Z0-9._-]/g, '-')
@@ -148,12 +137,7 @@ function localImageName(file) {
 }
 
 async function saveImageToProjectFolder(file) {
-    if (!shared.projectDirectoryHandle) {
-        if (!window.showDirectoryPicker) {
-            throw new Error('Local image storage is not supported in this browser. Use an image URL instead.');
-        }
-        shared.projectDirectoryHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
-    }
+    if (!shared.projectDirectoryHandle) return null;
     const assetsDirectory = await shared.projectDirectoryHandle.getDirectoryHandle('assets', { create: true });
     const imagesDirectory = await assetsDirectory.getDirectoryHandle('images', { create: true });
     const imageName = localImageName(file);
@@ -166,8 +150,27 @@ async function saveImageToProjectFolder(file) {
 
 export async function importImageAsset(file) {
     const localSource = await saveImageToProjectFolder(file);
-    shared.localImageFiles.set(localSource, file);
-    return localSource;
+    if (localSource) {
+        shared.localImageFiles.set(localSource, file);
+        return localSource;
+    }
+
+    const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('Could not read image'));
+        reader.readAsDataURL(file);
+    });
+
+    const response = await fetch('/api/assets/images', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: file.name, dataUrl })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Could not import image');
+    shared.localImageFiles.set(result.src, file);
+    return result.src;
 }
 
 export async function handleImageUpload(e) {
@@ -184,8 +187,8 @@ export async function handleImageUpload(e) {
 }
 
 export function chooseImageLink() {
-    const source = prompt('Paste an image URL or local file path:');
-    if (source) finalizeImageLayer(source.trim());
+    const url = prompt('Paste image URL:');
+    if (url) finalizeImageLayer(url);
 }
 
 export function finalizeImageLayer(src) {
