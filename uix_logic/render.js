@@ -287,7 +287,8 @@ export function renderComponentContent(element, layer) {
             item.textContent = name;
         }
         item.style.padding = `${Math.max(0, Number(layer.itemPadding) || 0)}px`;
-        item.style.borderBottom = layer.itemDividers && layer.itemDividers[index - 1] !== false
+        const dividerValue = layer.itemDividers && layer.itemDividers[index - 1];
+        item.style.borderBottom = dividerValue !== false && dividerValue !== 'false' && dividerValue !== 0 && dividerValue !== '0'
             ? `1px solid ${layer.itemDivider || '#cccccc'}` : 'none';
         list.appendChild(item);
     }
@@ -311,7 +312,6 @@ export function syncLayerElement(layer) {
 
     if (isFlexChild) {
         el.style.position = 'relative';
-        el.style.flexShrink = '0';
         el.style.left = '';
         el.style.top = '';
     } else {
@@ -498,7 +498,6 @@ export function render() {
             // left/top are intentionally left unset so flex controls
             // placement instead.
             el.style.position = 'relative';
-            el.style.flexShrink = '0';
         } else {
             // The editor canvas should preserve original layer x/y layout
             // regardless of whether the export will use fixed/sticky.

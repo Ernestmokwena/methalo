@@ -318,8 +318,34 @@ async function openExport() {
 
 export function closeExport() { document.getElementById('exportModal').classList.remove('active'); }
 
+async function fileToDataUrl(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ''));
+        reader.onerror = () => reject(new Error(`Could not read image ${file.name || ''}`.trim()));
+        reader.readAsDataURL(file);
+    });
+}
+
+async function inlineLocalImages(savedProject) {
+    const localSources = new Map();
+    for (const [src, file] of shared.localImageFiles) {
+        if (file && !String(src).startsWith('data:')) localSources.set(src, await fileToDataUrl(file));
+    }
+    if (!localSources.size) return savedProject;
+
+    const layers = Array.isArray(savedProject.layers) ? savedProject.layers : [];
+    layers.forEach(layer => {
+        if (localSources.has(layer.src)) layer.src = localSources.get(layer.src);
+        Object.values(layer.variantByCanvas || {}).forEach(variant => {
+            if (localSources.has(variant.src)) variant.src = localSources.get(variant.src);
+        });
+    });
+    return savedProject;
+}
+
 export async function generateExport() {
-    const savedProject = await readSavedProjectForExport();
+    const savedProject = await inlineLocalImages(await readSavedProjectForExport());
     updateStatus('Generating export...');
     const result = await callBusinessApi('export-html', savedProject);
     document.getElementById('exportCode').textContent = result.html;
