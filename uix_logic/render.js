@@ -312,6 +312,7 @@ export function syncLayerElement(layer) {
 
     if (isFlexChild) {
         el.style.position = 'relative';
+        el.style.flexShrink = '0';
         el.style.left = '';
         el.style.top = '';
     } else {
@@ -498,6 +499,7 @@ export function render() {
             // left/top are intentionally left unset so flex controls
             // placement instead.
             el.style.position = 'relative';
+            el.style.flexShrink = '0';
         } else {
             // The editor canvas should preserve original layer x/y layout
             // regardless of whether the export will use fixed/sticky.
