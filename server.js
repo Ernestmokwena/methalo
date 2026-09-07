@@ -4,7 +4,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 
 const root = __dirname;
-const business = require('./etc/secrets/main.js');
+const business = require('/etc/secrets/main.js');
 const imageDir = path.join(root, 'assets', 'images');
 const publicFiles = new Set([
   'main.html',
